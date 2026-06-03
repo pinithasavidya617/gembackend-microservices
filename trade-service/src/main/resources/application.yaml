@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5435/tradedb
     username: trade
-    password: trade
+    password: trade123
   jpa:
     hibernate:
       ddl-auto: update
