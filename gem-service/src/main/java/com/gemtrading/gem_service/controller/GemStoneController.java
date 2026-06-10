@@ -43,6 +43,7 @@ public class GemStoneController {
     public ResponseEntity<GemStoneResponse> getGemStoneById(
             @PathVariable Long id
     ) {
+        System.out.println("I got a hit");
         return ResponseEntity.ok(
                 gemStoneService.getGemStoneById(id)
         );

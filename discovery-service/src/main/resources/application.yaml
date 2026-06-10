@@ -1,7 +1,6 @@
 server:
   port: 8761
 
-
 spring:
   application:
     name: discovery-service
@@ -16,10 +15,9 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
   server:
     enable-self-preservation: false
-    eviction-interval-timer-in-ms: 5000
 
 management:
   endpoints:
     web:
       exposure:
-        include: health, info
+        include: health,info
