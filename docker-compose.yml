@@ -47,10 +47,12 @@ services:
       - "8081:8081"
     depends_on:
       - gem-db
+      - discovery-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://gem-db:5432/gemdb
       SPRING_DATASOURCE_USERNAME: gem
       SPRING_DATASOURCE_PASSWORD: gem123
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8761/eureka/
 
 
   dealer-service:
@@ -59,10 +61,13 @@ services:
       - "8082:8082"
     depends_on:
       - dealer-db
+      - discovery-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://dealer-db:5432/dealerdb
       SPRING_DATASOURCE_USERNAME: dealer
-      SPRING_DATASOURCE_PASSWORD: dealer123
+      SPRING_DATASOURCE_PASSWORD: dealer123\
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8761/eureka/
+
 
 
   trade-service:
@@ -71,10 +76,14 @@ services:
       - "8083:8083"
     depends_on:
       - trade-db
+      - discovery-service
+      - dealer-service
+      - gem-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://trade-db:5432/tradedb
       SPRING_DATASOURCE_USERNAME: trade
       SPRING_DATASOURCE_PASSWORD: trade123
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8761/eureka/
 
 
 volumes:
