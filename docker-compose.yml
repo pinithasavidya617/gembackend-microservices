@@ -65,7 +65,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://dealer-db:5432/dealerdb
       SPRING_DATASOURCE_USERNAME: dealer
-      SPRING_DATASOURCE_PASSWORD: dealer123\
+      SPRING_DATASOURCE_PASSWORD: dealer123
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8761/eureka/
 
 
