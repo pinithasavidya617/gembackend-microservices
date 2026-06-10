@@ -1,25 +1,13 @@
 server:
-  port: 8083
+  port: 8082
 
 spring:
   application:
-    name: trade-service
+    name: dealer-service
   datasource:
-    url: jdbc:postgresql://localhost:5437/tradedb
-    username: trade
-    password: trade123
+    url: jdbc:postgresql://localhost:5436/dealerdb
+    username: dealer
+    password: dealer123
   jpa:
     hibernate:
       ddl-auto: update
-
-gem:
-  service:
-    url: http://localhost:8081
-
-dealer:
-  service:
-    url: http://localhost:8082
-
-trade:
-  service:
-    url: http://localhost:8083
