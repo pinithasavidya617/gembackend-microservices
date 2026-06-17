@@ -1,6 +1,7 @@
 server:
   port: 8761
 
+
 spring:
   application:
     name: discovery-service
@@ -12,9 +13,10 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      defaultZone: http://${eureka.instance.hostname}:${service.port}/eureka/
   server:
     enable-self-preservation: false
+    eviction-interval-timer-in-ms: 5000
 
 management:
   endpoints:

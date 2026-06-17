@@ -1,11 +1,9 @@
 services:
+
   discovery-service:
     build: ./discovery-service
     ports:
       - "8761:8761"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-
 
   gem-db:
     image: postgres:17-alpine
@@ -17,7 +15,6 @@ services:
       POSTGRES_PASSWORD: gem123
     volumes:
       - gem-data:/var/lib/postgresql/data
-
   dealer-db:
     image: postgres:17-alpine
     ports:
@@ -28,8 +25,6 @@ services:
       POSTGRES_PASSWORD: dealer123
     volumes:
       - dealer-data:/var/lib/postgresql/data
-
-
   trade-db:
     image: postgres:17-alpine
     ports:
@@ -52,23 +47,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://gem-db:5432/gemdb
       SPRING_DATASOURCE_USERNAME: gem
       SPRING_DATASOURCE_PASSWORD: gem123
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8761/eureka/
-
-
-  dealer-service:
-    build: ./dealer-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - dealer-db
-      - discovery-service
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://dealer-db:5432/dealerdb
-      SPRING_DATASOURCE_USERNAME: dealer
-      SPRING_DATASOURCE_PASSWORD: dealer123
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8761/eureka/
-
-
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
 
   trade-service:
     build: ./trade-service
@@ -83,10 +62,42 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://trade-db:5432/tradedb
       SPRING_DATASOURCE_USERNAME: trade
       SPRING_DATASOURCE_PASSWORD: trade123
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
 
+  dealer-service:
+    build: ./dealer-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - dealer-db
+      - discovery-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://dealer-db:5432/dealerdb
+      SPRING_DATASOURCE_USERNAME: dealer
+      SPRING_DATASOURCE_PASSWORD: dealer123
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+
+  gateway-service:
+    build: ./gateway-service
+    ports:
+      - "8088:8080"
+    depends_on:
+      - discovery-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+
+  keycloak:
+    image: docker.io/keycloak/keycloak:25.0.0
+    command: start-dev --health-enabled=true
+    ports:
+      - "9001:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
 
 volumes:
   gem-data:
-  dealer-data:
   trade-data:
+  dealer-data:
+
+
