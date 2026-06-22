@@ -37,6 +37,16 @@ resilience4j:
         wait-duration-in-open-state: 30s
         permitted-number-of-calls-in-half-open-state: 3
 
+
+  retry:
+    instances:
+      gemService:
+        max-attempts: 3
+        wait-duration: 2s
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
+
 management:
   endpoints:
     web:
