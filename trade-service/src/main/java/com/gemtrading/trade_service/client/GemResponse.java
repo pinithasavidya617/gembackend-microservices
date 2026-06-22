@@ -4,12 +4,12 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Getter @Setter
-@NoArgsConstructor
+@Getter
+@Setter
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 public class GemResponse {
-
     private Long id;
     private String gemCode;
     private String type;
@@ -17,9 +17,9 @@ public class GemResponse {
     private BigDecimal caratWeight;
     private String origin;
     private String treatment;
-    private Double pricePerCarat;
+    private BigDecimal pricePerCarat;
     private Integer stockQuantity;
     private Boolean certified;
-    private String description;
     private Boolean active;
+    private String description;
 }
