@@ -1,0 +1,52 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5435/tradedb
+    username: trade
+    password: trade123
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+gem:
+  service:
+    url: http://localhost:8081
+
+dealer:
+  service:
+    url: http://localhost:8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      gemService:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+
+
+  retry:
+    instances:
+      gemService:
+        max-attempts: 3
+        wait-duration: 2s
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,circuitbreakers

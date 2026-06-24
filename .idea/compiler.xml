@@ -8,7 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="discovery-service" />
         <module name="gateway-service" />
-        <module name="trade-service" />
       </profile>
       <profile name="Annotation profile for trade-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -17,8 +16,9 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
-        <module name="dealer-service" />
+        <module name="trade-service" />
         <module name="gem-service" />
+        <module name="dealer-service" />
       </profile>
     </annotationProcessing>
   </component>
