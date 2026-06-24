@@ -1,9 +1,18 @@
 services:
 
+  config-server:
+    build: ./config-server
+    ports:
+      - "8888:8888"
+
   discovery-service:
     build: ./discovery-service
     ports:
       - "8761:8761"
+    depends_on:
+      - config-server
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
 
   gem-db:
     image: postgres:17-alpine
@@ -15,6 +24,7 @@ services:
       POSTGRES_PASSWORD: gem123
     volumes:
       - gem-data:/var/lib/postgresql/data
+
   dealer-db:
     image: postgres:17-alpine
     ports:
@@ -25,6 +35,7 @@ services:
       POSTGRES_PASSWORD: dealer123
     volumes:
       - dealer-data:/var/lib/postgresql/data
+
   trade-db:
     image: postgres:17-alpine
     ports:
@@ -43,26 +54,12 @@ services:
     depends_on:
       - gem-db
       - discovery-service
+      - config-server
     environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://gem-db:5432/gemdb
       SPRING_DATASOURCE_USERNAME: gem
       SPRING_DATASOURCE_PASSWORD: gem123
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
-
-  trade-service:
-    build: ./trade-service
-    ports:
-      - "8083:8083"
-    depends_on:
-      - trade-db
-      - discovery-service
-      - dealer-service
-      - gem-service
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://trade-db:5432/tradedb
-      SPRING_DATASOURCE_USERNAME: trade
-      SPRING_DATASOURCE_PASSWORD: trade123
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
 
   dealer-service:
     build: ./dealer-service
@@ -71,20 +68,38 @@ services:
     depends_on:
       - dealer-db
       - discovery-service
+      - config-server
     environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://dealer-db:5432/dealerdb
       SPRING_DATASOURCE_USERNAME: dealer
       SPRING_DATASOURCE_PASSWORD: dealer123
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+
+  trade-service:
+    build: ./trade-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - trade-db
+      - discovery-service
+      - config-server
+      - gem-service
+      - dealer-service
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://trade-db:5432/tradedb
+      SPRING_DATASOURCE_USERNAME: trade
+      SPRING_DATASOURCE_PASSWORD: trade123
 
   gateway-service:
     build: ./gateway-service
     ports:
-      - "8088:8080"
+      - "8088:8088"
     depends_on:
       - discovery-service
+      - config-server
     environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-service:8761/eureka/
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
 
   keycloak:
     image: docker.io/keycloak/keycloak:25.0.0
@@ -99,7 +114,5 @@ services:
 
 volumes:
   gem-data:
-  trade-data:
   dealer-data:
-
-
+  trade-data:
