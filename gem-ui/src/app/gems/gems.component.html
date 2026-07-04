@@ -1,0 +1,76 @@
+<div class="gems-container">
+
+  <div class="header">
+    <h1>💎 Gem Collection</h1>
+
+    <button class="fetch-btn" (click)="fetchGems()">
+      Load Gems
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="status-card loading">
+      <div class="spinner"></div>
+      <p>Loading gems...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="status-card error">
+      {{ error() }}
+    </div>
+  }
+
+  @if (!loading() && gems().length > 0) {
+    <div class="gems-grid">
+
+      @for (gem of gems(); track gem.id) {
+        <div class="gem-card">
+
+          <div class="card-header">
+            <h2>{{ gem.name }}</h2>
+            <span class="gem-type">{{ gem.type }}</span>
+          </div>
+
+          <div class="card-content">
+
+            <div class="info-row">
+              <span class="label">ID</span>
+              <span>{{ gem.id }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Weight</span>
+              <span>{{ gem.caratWeight }} ct</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">Price / Carat</span>
+              <span class="price">
+                {{ gem.pricePerCarat | currency:'USD':'symbol':'1.2-2' }}
+              </span>
+            </div>
+
+            <div class="info-row total">
+              <span class="label">Estimated Value</span>
+              <span class="value">
+                {{ (gem.caratWeight * gem.pricePerCarat) | currency:'USD':'symbol':'1.2-2' }}
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+      }
+
+    </div>
+  }
+
+  @if (!loading() && !error() && gems().length === 0) {
+    <div class="empty-state">
+      <h3>No Gems Loaded</h3>
+      <p>Click the button above to retrieve gem data.</p>
+    </div>
+  }
+
+</div>
