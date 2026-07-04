@@ -12,7 +12,7 @@ services:
     depends_on:
       - config-server
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
 
   gem-db:
     image: postgres:17-alpine
