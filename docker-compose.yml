@@ -56,7 +56,7 @@ services:
       - discovery-service
       - config-server
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://gem-db:5432/gemdb
       SPRING_DATASOURCE_USERNAME: gem
       SPRING_DATASOURCE_PASSWORD: gem123
@@ -70,13 +70,14 @@ services:
       - discovery-service
       - config-server
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://dealer-db:5432/dealerdb
       SPRING_DATASOURCE_USERNAME: dealer
       SPRING_DATASOURCE_PASSWORD: dealer123
 
   trade-service:
     build: ./trade-service
+    restart: on-failure
     ports:
       - "8083:8083"
     depends_on:
@@ -86,7 +87,7 @@ services:
       - gem-service
       - dealer-service
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://trade-db:5432/tradedb
       SPRING_DATASOURCE_USERNAME: trade
       SPRING_DATASOURCE_PASSWORD: trade123
@@ -99,7 +100,7 @@ services:
       - discovery-service
       - config-server
     environment:
-      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
 
   keycloak:
     image: docker.io/keycloak/keycloak:25.0.0
