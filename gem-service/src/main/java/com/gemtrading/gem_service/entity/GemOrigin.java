@@ -1,13 +1,12 @@
 package com.gemtrading.gem_service.entity;
 
 public enum GemOrigin {
-
     RATHNAPURA,
     RAKWANA,
     KURUWITA,
-    AHELIYAGODA,
     BERUWALA,
+    PALMADULLA,
     BALANGODA,
     NIWITHIGALA,
-    PALMADULLA
+    AHALIYAGODA
 }

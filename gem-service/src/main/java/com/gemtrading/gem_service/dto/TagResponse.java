@@ -4,7 +4,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -14,4 +15,5 @@ public class TagResponse {
     private String name;
     private String description;
     private LocalDateTime createdAt;
+
 }

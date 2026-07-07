@@ -1,5 +1,7 @@
 package com.gemtrading.gem_service.service;
 
+
+
 import com.gemtrading.gem_service.dto.CertificateRequest;
 import com.gemtrading.gem_service.dto.CertificateResponse;
 import com.gemtrading.gem_service.entity.Certificate;
@@ -7,7 +9,7 @@ import com.gemtrading.gem_service.entity.GemStone;
 import com.gemtrading.gem_service.exception.DuplicateResourceException;
 import com.gemtrading.gem_service.exception.ResourceNotFoundException;
 import com.gemtrading.gem_service.repository.CertificateRepository;
-import com.gemtrading.gem_service.repository.GemStoneRepo;
+import com.gemtrading.gem_service.repository.GemStoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,48 +17,47 @@ import org.springframework.stereotype.Service;
 public class CertificateService {
 
     private final CertificateRepository certificateRepository;
-    private final GemStoneRepo gemStoneRepo;
+    private final GemStoneRepository gemStoneRepository;
 
     @Autowired
-    public CertificateService(CertificateRepository certificateRepository , GemStoneRepo gemStoneRepo, GemStoneRepo gemStoneRepo1) {
+    public CertificateService(CertificateRepository certificateRepository
+            , GemStoneRepository gemStoneRepository) {
+        this.gemStoneRepository = gemStoneRepository;
         this.certificateRepository = certificateRepository;
-        this.gemStoneRepo = gemStoneRepo;
     }
 
     public CertificateResponse createCertificate(CertificateRequest request) {
 
         if (certificateRepository.existsByCertificateNumber(request.getCertificateNumber())) {
-            throw new DuplicateResourceException(
-                    "Certificate with number " +
-                            request.getCertificateNumber() +
-                            " already exists");
+            throw new DuplicateResourceException("Certificate with "
+                    + request.getCertificateNumber() + " already exists");
         }
 
         if (certificateRepository.existsByGemStoneId(request.getGemId())) {
-            throw new DuplicateResourceException(
-                    "Certificate for gem " +
-                            request.getGemId() +
-                            " already exists");
+            throw new DuplicateResourceException("Certificate with "
+                    + request.getGemId()+ " already exists");
         }
 
-        GemStone stone = gemStoneRepo.findById(request.getGemId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Gem",
-                                request.getGemId().toString()
-                        )
-                );
+        GemStone stone = gemStoneRepository.findById(request.getGemId()).orElseThrow(
+                ()-> new ResourceNotFoundException("Gem"
+                , request.getGemId().toString()));
 
-        Certificate certificate = Certificate.builder()
-                .certificateNumber(request.getCertificateNumber())
+        Certificate certificate = Certificate.
+                builder().
+                certificateNumber(request.getCertificateNumber())
                 .gemStone(stone)
                 .issuedBy(request.getIssuedBy())
-                .issuedDate(request.getIssueDate())
+                .issuedDate(request.getIssuedDate())
                 .expiryDate(request.getExpiryDate())
                 .remarks(request.getRemarks())
                 .build();
 
         return toResponse(certificateRepository.save(certificate));
+    }
+
+    public CertificateResponse getCertificateById(Long id) {
+        return toResponse(certificateRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id.toString(), "Resource not found")));
     }
 
     private CertificateResponse toResponse(Certificate cert) {
@@ -74,9 +75,5 @@ public class CertificateService {
                 .build();
     }
 
-    public CertificateResponse getCertificateById(Long id) throws ResourceNotFoundException {
-        return toResponse(certificateRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("resource not found" , id.toString())
-        ));
-    }
+
 }

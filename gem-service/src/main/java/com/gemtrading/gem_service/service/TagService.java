@@ -1,106 +1,92 @@
 package com.gemtrading.gem_service.service;
+
 import com.gemtrading.gem_service.dto.TagRequest;
 import com.gemtrading.gem_service.dto.TagResponse;
 import com.gemtrading.gem_service.entity.Tag;
-import com.gemtrading.gem_service.exception.DuplicateResourceException;
 import com.gemtrading.gem_service.exception.ResourceNotFoundException;
-import com.gemtrading.gem_service.repository.TagRepo;
+import com.gemtrading.gem_service.repository.TagRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TagService {
 
-    private final TagRepo tagRepo;
+    private final TagRepository tagRepository;
 
     public TagResponse createTag(TagRequest request) {
 
-        if (tagRepo.existsByNameIgnoreCase(request.getName())) {
-            throw new DuplicateResourceException(
-                    "Tag already exists with name: " + request.getName()
-            );
+        if (tagRepository.existsByNameIgnoreCase(request.getName())) {
+            throw new IllegalArgumentException("Tag already exists with name: " + request.getName());
         }
 
         Tag tag = Tag.builder()
-                .name(request.getName())
+                .name(request.getName().trim())
                 .description(request.getDescription())
                 .build();
 
-        return toResponse(tagRepo.save(tag));
+        Tag savedTag = tagRepository.save(tag);
+
+        return mapToResponse(savedTag);
+    }
+
+    public Tag getTagEntityById(Long tagId) {
+        return tagRepository.findById(tagId).orElseThrow(()
+                -> new ResourceNotFoundException(tagId.toString(), "resource not found"));
+    }
+
+    public List<TagResponse> getAllTags() {
+        return tagRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     public TagResponse getTagById(Long id) {
 
-        Tag tag = tagRepo.findById(id)
+        Tag tag = tagRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Tag",
-                                id.toString()
-                        ));
+                        new EntityNotFoundException("Tag not found with id: " + id));
 
-        return toResponse(tag);
+        return mapToResponse(tag);
     }
 
-    public Tag getTagEntityById(Long tagId) {
-        return tagRepo.findById(tagId).orElseThrow(() -> new ResourceNotFoundException(tagId.toString() , "resource not found"));
-    }
+    public TagResponse updateTag(Long id, TagRequest request) {
 
-    public Page<TagResponse> getAllTags(
-            int page,
-            int size
-    ) {
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        return tagRepo.findAll(pageable)
-                .map(this::toResponse);
-    }
-
-    public TagResponse updateTag(
-            Long id,
-            TagRequest request
-    ) {
-
-        Tag tag = tagRepo.findById(id)
+        Tag tag = tagRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Tag",
-                                id.toString()
-                        ));
+                        new EntityNotFoundException("Tag not found with id: " + id));
 
-        if (!tag.getName().equalsIgnoreCase(request.getName())
-                && tagRepo.existsByNameIgnoreCase(request.getName())) {
+        tagRepository.findByNameIgnoreCase(request.getName())
+                .ifPresent(existingTag -> {
+                    if (!existingTag.getId().equals(id)) {
+                        throw new IllegalArgumentException(
+                                "Another tag already exists with name: " + request.getName()
+                        );
+                    }
+                });
 
-            throw new DuplicateResourceException(
-                    "Tag already exists with name: "
-                            + request.getName()
-            );
-        }
-
-        tag.setName(request.getName());
+        tag.setName(request.getName().trim());
         tag.setDescription(request.getDescription());
 
-        return toResponse(tagRepo.save(tag));
+        Tag updatedTag = tagRepository.save(tag);
+
+        return mapToResponse(updatedTag);
     }
 
     public void deleteTag(Long id) {
 
-        Tag tag = tagRepo.findById(id)
+        Tag tag = tagRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Tag",
-                                id.toString()
-                        ));
+                        new EntityNotFoundException("Tag not found with id: " + id));
 
-        tagRepo.delete(tag);
+        tagRepository.delete(tag);
     }
 
-    private TagResponse toResponse(Tag tag) {
-
+    private TagResponse mapToResponse(Tag tag) {
         return TagResponse.builder()
                 .id(tag.getId())
                 .name(tag.getName())

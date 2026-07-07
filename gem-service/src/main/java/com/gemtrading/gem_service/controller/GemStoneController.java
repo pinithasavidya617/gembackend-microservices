@@ -1,9 +1,8 @@
 package com.gemtrading.gem_service.controller;
-
 import com.gemtrading.gem_service.dto.GemStoneRequest;
 import com.gemtrading.gem_service.dto.GemStoneResponse;
+import com.gemtrading.gem_service.exception.ResourceNotFoundException;
 import com.gemtrading.gem_service.service.GemStoneService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,39 +12,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/gems")
+@RequestMapping("api/v1/gems")
 @RequiredArgsConstructor
 public class GemStoneController {
 
     private final GemStoneService gemStoneService;
 
-    @GetMapping
-    public ResponseEntity<Page<GemStoneResponse>> getAllGems(
-            @PageableDefault(size = 20, sort = "color") Pageable pageable
-    ) {//Spring automatically creates Pageable object from query params.
 
-        return ResponseEntity.ok( //HTTP 200 OK
-                gemStoneService.getAllGemStones(pageable)
-        );
+    @GetMapping
+    public ResponseEntity<Page<GemStoneResponse>> getAllGemStones(@PageableDefault(size = 20, sort = "color") Pageable pageable) {
+        return ResponseEntity.ok(gemStoneService.getAllGemStones(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<GemStoneResponse> createGemStone(
-           @Valid @RequestBody GemStoneRequest request
-    ) {
-
+    public ResponseEntity<GemStoneResponse> createGemStone(@RequestBody GemStoneRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Custom-Header", "Sending custom header")
-                .body(gemStoneService.createGemStone(request));
+                .header("Custom-Head", "Sending Custom Header") // setting a custom header
+                .body(gemStoneService.createGemstone(request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GemStoneResponse> getGemStoneById(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<GemStoneResponse> getGemStoneById(@PathVariable Long id)
+            throws ResourceNotFoundException {
+
         System.out.println("I got a hit");
-        return ResponseEntity.ok(
-                gemStoneService.getGemStoneById(id)
-        );
+        return ResponseEntity.ok(gemStoneService.getGemStoneById(id));
     }
+
 }

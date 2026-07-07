@@ -1,5 +1,6 @@
 package com.gemtrading.gem_service.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class Certificate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String certificateNumber;
@@ -42,8 +43,7 @@ public class Certificate {
     private LocalDateTime createdAt;
 
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
 }

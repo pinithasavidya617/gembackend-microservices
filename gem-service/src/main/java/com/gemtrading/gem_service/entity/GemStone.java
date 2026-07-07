@@ -28,13 +28,22 @@ public class GemStone {
     @Enumerated(EnumType.STRING)
     private GemType type;
 
+    @ManyToMany
+    @JoinTable(
+            name = "gemstone_tags",
+            joinColumns = @JoinColumn(name = "gemstone_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+
     @Column(nullable = false)
     private String color;
 
     @Column(nullable = false)
-    private BigDecimal caratWeight;
+    private BigDecimal caratWeight; //we use bigDecimal to avoid rounding issues with double,
+    //big decimal gives precision to our decimal values
 
-    @OneToOne(mappedBy = "gemStone" , cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "gemStone", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Certificate certificate;
 
     @Column(nullable = false)
@@ -45,15 +54,7 @@ public class GemStone {
     @Enumerated(EnumType.STRING)
     private GemTreatment treatment;
 
-    @ManyToMany
-    @JoinTable(
-            name = "gemstone_tags",
-            joinColumns = @JoinColumn(name = "gemstone_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private Set<Tag> tags = new HashSet<>();
-
-    @Column
+    @Column(nullable = false)
     private BigDecimal pricePerCarat;
 
     @Column(nullable = false)
@@ -73,7 +74,7 @@ public class GemStone {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column
+
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -85,4 +86,5 @@ public class GemStone {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
 }

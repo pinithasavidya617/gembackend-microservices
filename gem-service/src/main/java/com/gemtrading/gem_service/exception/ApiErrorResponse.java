@@ -2,7 +2,8 @@ package com.gemtrading.gem_service.exception;
 
 import lombok.*;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

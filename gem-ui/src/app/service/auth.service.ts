@@ -21,7 +21,7 @@ export class AuthService {
       await this.oauthService.loadDiscoveryDocumentAndTryLogin();
       this.initialized = true;
 
-      if (!this.oauthService.hasValidAccessToken()) {
+      if (this.oauthService.hasValidAccessToken()) {
         this.oauthService.setupAutomaticSilentRefresh();
       }
     } catch (error) {

@@ -9,7 +9,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tags")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,19 +23,18 @@ public class Tag {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private  String description;
+    @Column(length = 500)
+    private String description;
 
     @ManyToMany(mappedBy = "tags")
     @Builder.Default
     private Set<GemStone> gemStones = new HashSet<>();
 
-    @Column(nullable = false , updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
 }

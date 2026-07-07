@@ -1,6 +1,7 @@
 package com.gemtrading.gem_service.dto;
 
 
+
 import com.gemtrading.gem_service.entity.GemOrigin;
 import com.gemtrading.gem_service.entity.GemTreatment;
 import com.gemtrading.gem_service.entity.GemType;
@@ -9,8 +10,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

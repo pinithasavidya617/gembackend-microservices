@@ -1,6 +1,5 @@
 package com.gemtrading.gem_service.repository;
 
-
 import com.gemtrading.gem_service.entity.Certificate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,4 +14,5 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
     boolean existsByGemStoneId(Long gemStoneId);
 
     boolean existsByCertificateNumber(String certificateNumber);
+
 }
